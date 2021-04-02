@@ -22,32 +22,32 @@ const client = new MongoClient(uri, {
 });
 client.connect((err) => {
   console.log("connection err", err);
-  const eventCollection = client.db("volunteer").collection("events");
+  const eventCollection = client.db("newrite").collection("books");
 
-  app.get("/events", (req, res) => {
-    eventCollection.find().toArray((err, items) => {
-      res.send(items);
-    });
-  });
+  //   app.get("/events", (req, res) => {
+  //     eventCollection.find().toArray((err, items) => {
+  //       res.send(items);
+  //     });
+  //   });
 
-  app.post("/addEvent", (req, res) => {
-    const newEvent = req.body;
-    console.log("adding new event: ", newEvent);
-    eventCollection.insertOne(newEvent).then((result) => {
-      console.log("inserted count", result.insertedCount);
-      res.send(result.insertedCount > 0);
-    });
-  });
+  //   app.post("/addEvent", (req, res) => {
+  //     const newEvent = req.body;
+  //     console.log("adding new event: ", newEvent);
+  //     eventCollection.insertOne(newEvent).then((result) => {
+  //       console.log("inserted count", result.insertedCount);
+  //       res.send(result.insertedCount > 0);
+  //     });
+  //   });
 
-  app.delete("deleteEvent/:id", (req, res) => {
-    const id = ObjectID(req.params.id);
-    console.log("delete this", id);
-    eventCollection
-      .findOneAndDelete({ _id: id })
-      .then((documents) => res.send(!!documents.value));
-  });
+  //   app.delete("deleteEvent/:id", (req, res) => {
+  //     const id = ObjectID(req.params.id);
+  //     console.log("delete this", id);
+  //     eventCollection
+  //       .findOneAndDelete({ _id: id })
+  //       .then((documents) => res.send(!!documents.value));
+  //   });
 
-  //   client.close();
+  //   //   client.close();
 });
 
 app.listen(port, () => {
