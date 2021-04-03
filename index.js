@@ -21,33 +21,54 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 client.connect((err) => {
-  console.log("connection err", err);
-  const eventCollection = client.db("newrite").collection("books");
+  const bookCollection = client.db("newrite").collection("books");
 
   app.get("/books", (req, res) => {
-    eventCollection.find().toArray((err, items) => {
+    bookCollection.find().toArray((err, items) => {
       res.send(items);
     });
   });
 
   app.post("/addbook", (req, res) => {
     const newEvent = req.body;
-    console.log("adding new event: ", newEvent);
-    eventCollection.insertOne(newEvent).then((result) => {
-      console.log("inserted count", result.insertedCount);
+    bookCollection.insertOne(newEvent).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
 
-  //   app.delete("deleteEvent/:id", (req, res) => {
-  //     const id = ObjectID(req.params.id);
-  //     console.log("delete this", id);
-  //     eventCollection
-  //       .findOneAndDelete({ _id: id })
-  //       .then((documents) => res.send(!!documents.value));
-  //   });
-
-  //   //   client.close();
+  app.get("/books/:id", (req, res) => {
+    bookCollection
+      .find({
+        _id: { $in: [ObjectID(req.params.id)] },
+      })
+      .toArray((err, items) => {
+        res.send(items);
+      });
+  });
+  app.delete("/deleteEvent/:id", (req, res) => {
+    bookCollection
+      .findOneAndDelete({
+        _id: { $in: [ObjectID(req.params.id)] },
+      })
+      .toArray((err, items) => {
+        res.send(items);
+      });
+  });
+});
+client.connect((err) => {
+  const bookCollection = client.db("newrite").collection("orders");
+  app.post("/addOrders", (req, res) => {
+    const newOrders = req.body;
+    bookCollection.insertOne(newOrders).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
+  });
+  app.get("/order", (req, res) => {
+    const queryEmail = req.query.email;
+    bookCollection.find({ email: queryEmail }).toArray((err, items) => {
+      res.send(items);
+    });
+  });
 });
 
 app.listen(port, () => {
